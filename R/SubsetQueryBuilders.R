@@ -126,3 +126,27 @@ DemographicSubsetQb <- R6::R6Class(
     }
   )
 )
+
+
+MeasurementSubsetQb <- R6::R6Class(
+  classname = "MeasurementSubsetQb",
+  inherit = QueryBuilder,
+  private = list(
+    innerQuery = function(targetTable) {
+      sql <- SqlRender::readSql(system.file("sql", "sql_server", "subsets", "MeasurementSubsetOperator.sql", package = "CohortGenerator"))
+      sql <- SqlRender::render(sql,
+                               target_table = targetTable,
+                               output_table = self$getTableObjectId(),
+                               measurement_concept_ids = private$operator$measurementConceptIds,
+                               unit_concept_ids = private$operator$unitConceptIds,
+                               min_lab_value = private$operator$minLabValue,
+                               max_lab_value = private$operator$maxLabValue,
+                               type_concept_ids = private$operator$typeConceptIds,
+                               right_bound_inclusive = private$operator$rightBoundInclusive,
+                               left_bound_exclusive = private$operator$leftBoundExclusive,
+                               warnOnMissingParameters = TRUE
+      )
+      return(sql)
+    }
+  )
+)

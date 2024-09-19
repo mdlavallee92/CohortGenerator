@@ -48,7 +48,7 @@ where cohort_definition_id in (@cohort_ids)
     from cte_lab_values_final
     where cte_lab_values_final.cohort_definition_id = COHORT.cohort_definition_id
       and cte_lab_values_final.subject_id = COHORT.subject_id
-      and cte_lab_values_final.covariate_value >= @gte
-      and cte_lab_values_final.covariate_value < @lt
+      and cte_lab_values_final.covariate_value >= @right_bound_inclusive
+      and cte_lab_values_final.covariate_value < @left_bound_exclusive
   )
 ;
