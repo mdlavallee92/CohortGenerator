@@ -142,8 +142,8 @@ MeasurementSubsetQb <- R6::R6Class(
                                min_lab_value = private$operator$minLabValue,
                                max_lab_value = private$operator$maxLabValue,
                                type_concept_ids = private$operator$typeConceptIds,
-                               right_bound_inclusive = private$operator$rightBoundInclusive,
-                               left_bound_exclusive = private$operator$leftBoundExclusive,
+                               left_bound_inclusive = private$operator$leftBoundInclusive,
+                               right_bound_exclusive = private$operator$rightBoundExclusive,
                                warnOnMissingParameters = TRUE
       )
       return(sql)
