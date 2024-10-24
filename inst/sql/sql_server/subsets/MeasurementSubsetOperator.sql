@@ -11,10 +11,11 @@ as
   	subject_id,
   	measurement_date,
     value_as_number AS covariate_value,
-    DENSE_RANK() OVER(PARTITION BY cohort_definition_id, person_id ORDER BY measurement_date ASC) AS date_rank
-  FROM @cohort_database_schema.@cohort_table cohort
-    JOIN @cdm_database_schema.measurement ON measurement.person_id = cohort.subject_id
-	    AND measurement_date > cohort_start_date
+    DENSE_RANK() OVER(PARTITION BY cohort_definition_id, person_id ORDER BY measurement_date DESC, covariate_value DESC) AS date_rank
+  FROM @workDatabaseSchema.@cohortTable cohort
+    JOIN @cdmDatabaseSchema.measurement ON measurement.person_id = cohort.subject_id
+	    --AND measurement_date >= DATEADD(day, -365, cohort.cohort_start_date)
+	    AND measurement_date <= cohort_start_date
 	    AND measurement_concept_id IN (@measurement_concept_ids)
       AND measurement.unit_concept_id IN (@unit_concept_ids)
       AND measurement.value_as_number >= @min_lab_value

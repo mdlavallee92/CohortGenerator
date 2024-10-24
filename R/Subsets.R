@@ -888,7 +888,7 @@ MeasurementSubsetOperator <- R6::R6Class(
   inherit = SubsetOperator,
   private = list(
     queryBuilder = MeasurementSubsetQb,
-    suffixStr = "Limit to",
+    suffixStr = "Meas",
     .measurementConceptIds = NULL,
     .unitConceptIds = NULL,
     .minLabValue = NULL,
@@ -910,35 +910,35 @@ MeasurementSubsetOperator <- R6::R6Class(
     #' @description List representation of object
     toList = function() {
       objRef <- super$toList()
-      # objRef$priorTime <- jsonlite::unbox(private$.priorTime)
-      # objRef$followUpTime <- jsonlite::unbox(private$.followUpTime)
-      # objRef$limitTo <- jsonlite::unbox(private$.limitTo)
-      # objRef$calendarStartDate <- jsonlite::unbox(private$.calendarStartDate)
-      # objRef$calendarEndDate <- jsonlite::unbox(private$.calendarEndDate)
-      # 
+      objRef$measurementConceptIds <- jsonlite::unbox(private$.measurementConceptIds)
+      objRef$unitConceptIds <- jsonlite::unbox(private$.unitConceptIds)
+      objRef$minLabValue <- jsonlite::unbox(private$.minLabValue)
+      objRef$maxLabValue <- jsonlite::unbox(private$.maxLabValue)
+      objRef$typeConceptIds <- jsonlite::unbox(private$.typeConceptIds)
+
       objRef
     }
   ),
   active = list(
     #' @field measurementConceptIds             concept Ids specifying the measure of interest
     measurementConceptIds = function(measurementConceptIds) {
-      .setActiveNumeric(private = private, key = ".measurementConceptIds", value = measurementConceptIds)
+      .setActiveInteger(private = private, key = ".measurementConceptIds", value = measurementConceptIds)
     },
     #' @field unitConceptIds          concept ids specifying the unit of interest relative to the measure
     unitConceptIds = function(unitConceptIds) {
-      .setActiveNumeric(private = private, key = ".unitConceptIds", value = unitConceptIds)
+      .setActiveInteger(private = private, key = ".unitConceptIds", value = unitConceptIds)
     },
     #' @field minLabValue          minimum possible value for a lab measure
     minLabValue = function(minLabValue) {
-      .setActiveNumeric(private = private, key = ".minLabValue", value = minLabValue)
+      .setActiveInteger(private = private, key = ".minLabValue", value = minLabValue)
     },
     #' @field maxLabValue          maximum possible value for a lab measure
     maxLabValue = function(maxLabValue) {
-      .setActiveNumeric(private = private, key = ".maxLabValue", value = maxLabValue)
+      .setActiveInteger(private = private, key = ".maxLabValue", value = maxLabValue)
     },
     #' @field typeConceptIds          type concept ids restricting the search to a particular provenance
     typeConceptIds = function(typeConceptIds) {
-      .setActiveNumeric(private = private, key = ".typeConceptIds", value = typeConceptIds)
+      .setActiveInteger(private = private, key = ".typeConceptIds", value = typeConceptIds)
     },
   )
 )
@@ -948,7 +948,13 @@ MeasurementSubsetOperator <- R6::R6Class(
 #' @description
 #' Subset cohorts using specified measurement criteria
 #' @export
-#' @param name              Name of operation
+#' @param name                    Name of operation
+#' @param measurementConceptIds   concept ids for lab measures of interest
+#' @param unitConceptId           concept ids for units corresponding to lab measures
+#' @param measurementThreshold    Table listing left and right bounds of breaks with a label
+#' @param minLabValue             Minimum plausible lab value
+#' @param maxLabValue             Maximum plausible lab value
+#' @param typeConceptIds          Type concept ids to limit measurement query to certain data provenance
 createMeasurementSubset <- function(name = NULL,
                               measurementConceptIds,
                               unitConceptIds,
@@ -960,14 +966,13 @@ createMeasurementSubset <- function(name = NULL,
     
   subset <- MeasurementSubsetOperator$new()
   subset$name <- name
-  subset$measurementConceptIds <- measurementConceptIds
-  subset$unitConceptIds <- unitConceptIds
+  subset$measurementConceptIds <- as.integer(measurementConceptIds)
+  subset$unitConceptIds <- as.integer(unitConceptIds)
   subset$measurementThresholds <- measurmentThresholds
-  subset$minLabValue <- minLabValue
-  subset$maxLabValue <- maxLabValue
-  subset$typeConceptIds <- typeConceptIds # need this to remove NLP that leak into the meas domain
+  subset$minLabValue <- as.integer(minLabValue)
+  subset$maxLabValue <- as.integer(maxLabValue)
+  subset$typeConceptIds <- as.integer(typeConceptIds) # need this to remove NLP that leak into the meas domain
 
   return(subset)
 }
-
 
